@@ -25,8 +25,6 @@
 #define MAVLINKX_ENCODE_BITBUFFER_ENABLE
 #define MAVLINKX_DECODE_BITBUFFER_ENABLE
 
-<<<<<<< Updated upstream
-=======
 #define MAVLINKX_DECODE_LUT_ENABLE
 #define MAVLINKX_DECODE_PEEK_ENABLE
 #define MAVLINKX_DECODE_SPLIT_ENABLE
@@ -45,7 +43,6 @@
   #error "MAVLINKX_DECODE_FUSED_ENABLE requires MAVLINKX_DECODE_BITBUFFER_ENABLE"
 #endif
 
->>>>>>> Stashed changes
 #if defined ESP8266 || defined ESP32
 #define MAVLINKX_O3 // esp seem not to work without, at least BetaFpv 1w Micro does not
 #endif
@@ -918,11 +915,8 @@ void _fmavX_encode_flush_bits(uint8_t* payload_out, uint16_t* len_out)
 #endif // MAVLINKX_ENCODE_BITBUFFER_ENABLE
 
 
-<<<<<<< Updated upstream
-=======
 
 
->>>>>>> Stashed changes
 void _fmavX_encode_rle(uint8_t* const payload_out, uint16_t* const len_out, uint8_t c, uint8_t RLE_cnt)
 {
 uint16_t code;
@@ -1046,8 +1040,6 @@ typedef enum {
 } fmavx_code_e;
 
 
-<<<<<<< Updated upstream
-=======
 #ifdef MAVLINKX_DECODE_LUT_ENABLE
 
 typedef struct {
@@ -1105,7 +1097,6 @@ const uint8_t fmavx_slow_code[8] = {
 
 #endif // MAVLINKX_DECODE_SPLIT_ENABLE
 
->>>>>>> Stashed changes
 // TODO: shouldn't be global
 uint8_t fmavx_in_buf[300];
 
@@ -1184,8 +1175,6 @@ CHECKRANGE(len,258);
         // get next code
         uint8_t code = MAVLINKX_CODE_UNDEFINED;
 
-<<<<<<< Updated upstream
-=======
         TS_START(0);
 
 #ifdef MAVLINKX_DECODE_FUSED_ENABLE
@@ -1361,7 +1350,6 @@ CHECKRANGE(fmavx_status.in_pos,258);
             }
         }
 #else
->>>>>>> Stashed changes
         if (_fmavX_decode_get_bits(&c, len, 2)) {
             if (c == 0b10) { // 10
                 code = MAVLINKX_CODE_1_64;
@@ -1390,12 +1378,7 @@ CHECKRANGE(fmavx_status.in_pos,258);
                 }
             }
         }
-<<<<<<< Updated upstream
-
-        if (code == MAVLINKX_CODE_UNDEFINED) return; // end
-=======
 #endif
->>>>>>> Stashed changes
 
         if (code == MAVLINKX_CODE_UNDEFINED) return; // end-of-stream
 
@@ -1439,10 +1422,7 @@ CHECKRANGE(*len_out,256);
 
         TS_END(0, 1000);
     }
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 }
 
 
