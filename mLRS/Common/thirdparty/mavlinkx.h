@@ -25,22 +25,16 @@
 #define MAVLINKX_ENCODE_BITBUFFER_ENABLE
 #define MAVLINKX_DECODE_BITBUFFER_ENABLE
 
-#define MAVLINKX_DECODE_LUT_ENABLE
-#define MAVLINKX_DECODE_PEEK_ENABLE
-#define MAVLINKX_DECODE_SPLIT_ENABLE
-#define MAVLINKX_DECODE_FUSED_ENABLE
+// decode method selection: FUSED, SPLIT, LUT, PEEK (comment out for original fallback)
+#define MAVLINKX_DECODE_FUSED   1
+#define MAVLINKX_DECODE_SPLIT   2
+#define MAVLINKX_DECODE_LUT     3
+#define MAVLINKX_DECODE_PEEK    4
 
-#if defined(MAVLINKX_DECODE_LUT_ENABLE) && !defined(MAVLINKX_DECODE_BITBUFFER_ENABLE)
-  #error "MAVLINKX_DECODE_LUT_ENABLE requires MAVLINKX_DECODE_BITBUFFER_ENABLE"
-#endif
-#if defined(MAVLINKX_DECODE_PEEK_ENABLE) && !defined(MAVLINKX_DECODE_BITBUFFER_ENABLE)
-  #error "MAVLINKX_DECODE_PEEK_ENABLE requires MAVLINKX_DECODE_BITBUFFER_ENABLE"
-#endif
-#if defined(MAVLINKX_DECODE_SPLIT_ENABLE) && !defined(MAVLINKX_DECODE_BITBUFFER_ENABLE)
-  #error "MAVLINKX_DECODE_SPLIT_ENABLE requires MAVLINKX_DECODE_BITBUFFER_ENABLE"
-#endif
-#if defined(MAVLINKX_DECODE_FUSED_ENABLE) && !defined(MAVLINKX_DECODE_BITBUFFER_ENABLE)
-  #error "MAVLINKX_DECODE_FUSED_ENABLE requires MAVLINKX_DECODE_BITBUFFER_ENABLE"
+#define MAVLINKX_DECODE_METHOD  MAVLINKX_DECODE_FUSED
+
+#ifdef MAVLINKX_DECODE_METHOD
+  #define MAVLINKX_DECODE_BITBUFFER_ENABLE
 #endif
 
 #if defined ESP8266 || defined ESP32
@@ -1040,7 +1034,7 @@ typedef enum {
 } fmavx_code_e;
 
 
-#ifdef MAVLINKX_DECODE_LUT_ENABLE
+#if defined(MAVLINKX_DECODE_METHOD) && (MAVLINKX_DECODE_METHOD == MAVLINKX_DECODE_LUT)
 
 typedef struct {
     uint8_t len;
@@ -1068,20 +1062,13 @@ const fmavx_decode_lut_t fmavx_decode_lut[32] = {
     {2, MAVLINKX_CODE_191_254}, {2, MAVLINKX_CODE_191_254}, {2, MAVLINKX_CODE_191_254}, {2, MAVLINKX_CODE_191_254},
 };
 
-#endif // MAVLINKX_DECODE_LUT_ENABLE
+#endif // MAVLINKX_DECODE_LUT
 
 
-#ifdef MAVLINKX_DECODE_SPLIT_ENABLE
+#if defined(MAVLINKX_DECODE_METHOD) && \
+    (MAVLINKX_DECODE_METHOD == MAVLINKX_DECODE_FUSED || MAVLINKX_DECODE_METHOD == MAVLINKX_DECODE_SPLIT)
 
-// fast path: direct map for 2-bit prefixes 01, 10, 11 (index 0 unused, handled by slow path)
-const uint8_t fmavx_fast_code[4] = {
-    0,                      // 00 -> slow path
-    MAVLINKX_CODE_65_190,   // 01
-    MAVLINKX_CODE_1_64,     // 10
-    MAVLINKX_CODE_191_254   // 11
-};
-
-// slow path: 00xxx prefixes (3-5 bits)
+// slow path: 00xxx prefixes (3-5 bits), used by FUSED and SPLIT
 const uint8_t fmavx_slow_len[8] = {
     3, 3, 3, 3, // 000xx
     4, 4,       // 0010x
@@ -1095,7 +1082,20 @@ const uint8_t fmavx_slow_code[8] = {
     MAVLINKX_CODE_255_RLE
 };
 
-#endif // MAVLINKX_DECODE_SPLIT_ENABLE
+#endif // FUSED || SPLIT
+
+
+#if defined(MAVLINKX_DECODE_METHOD) && (MAVLINKX_DECODE_METHOD == MAVLINKX_DECODE_SPLIT)
+
+// fast path: direct map for 2-bit prefixes 01, 10, 11 (index 0 unused, handled by slow path)
+const uint8_t fmavx_fast_code[4] = {
+    0,                      // 00 -> slow path
+    MAVLINKX_CODE_65_190,   // 01
+    MAVLINKX_CODE_1_64,     // 10
+    MAVLINKX_CODE_191_254   // 11
+};
+
+#endif // SPLIT
 
 // TODO: shouldn't be global
 uint8_t fmavx_in_buf[300];
@@ -1177,7 +1177,7 @@ CHECKRANGE(len,258);
 
         TS_START(0);
 
-#ifdef MAVLINKX_DECODE_FUSED_ENABLE
+#if defined(MAVLINKX_DECODE_METHOD) && (MAVLINKX_DECODE_METHOD == MAVLINKX_DECODE_FUSED)
         {   // fused: prefix + data extraction inline for fast-path symbols
             // hoist state to registers
             uint32_t bit_buf = fmavx_status.bit_buf;
@@ -1259,7 +1259,7 @@ CHECKRANGE(len,258);
             fmavx_status.in_pos = in_pos;
         }
 
-#elif defined(MAVLINKX_DECODE_SPLIT_ENABLE)
+#elif defined(MAVLINKX_DECODE_METHOD) && (MAVLINKX_DECODE_METHOD == MAVLINKX_DECODE_SPLIT)
         // hoist state to registers for the refill loop
         uint32_t bit_buf = fmavx_status.bit_buf;
         uint32_t bit_cnt = fmavx_status.bit_cnt;
@@ -1298,7 +1298,7 @@ CHECKRANGE(len,258);
         fmavx_status.bit_cnt = bit_cnt;
         fmavx_status.in_pos = in_pos;
 
-#elif defined(MAVLINKX_DECODE_LUT_ENABLE)
+#elif defined(MAVLINKX_DECODE_METHOD) && (MAVLINKX_DECODE_METHOD == MAVLINKX_DECODE_LUT)
         // refill bit buffer: fill to near-full so _fmavX_decode_get_bits rarely needs to refill
         while (fmavx_status.bit_cnt <= 24 && fmavx_status.in_pos < len) {
 CHECKRANGE(fmavx_status.in_pos,258);
@@ -1314,7 +1314,7 @@ CHECKRANGE(fmavx_status.in_pos,258);
                 fmavx_status.bit_cnt -= prefix_len;
             }
         }
-#elif defined(MAVLINKX_DECODE_PEEK_ENABLE)
+#elif defined(MAVLINKX_DECODE_METHOD) && (MAVLINKX_DECODE_METHOD == MAVLINKX_DECODE_PEEK)
         // refill bit buffer: fill to near-full so _fmavX_decode_get_bits rarely needs to refill
         while (fmavx_status.bit_cnt <= 24 && fmavx_status.in_pos < len) {
 CHECKRANGE(fmavx_status.in_pos,258);
