@@ -1065,10 +1065,9 @@ const fmavx_decode_lut_t fmavx_decode_lut[32] = {
 #endif // MAVLINKX_DECODE_LUT
 
 
-#if defined(MAVLINKX_DECODE_METHOD) && \
-    (MAVLINKX_DECODE_METHOD == MAVLINKX_DECODE_FUSED || MAVLINKX_DECODE_METHOD == MAVLINKX_DECODE_SPLIT)
+#if defined(MAVLINKX_DECODE_METHOD) && (MAVLINKX_DECODE_METHOD == MAVLINKX_DECODE_SPLIT)
 
-// slow path: 00xxx prefixes (3-5 bits), used by FUSED and SPLIT
+// slow path: 00xxx prefixes (3-5 bits), used by SPLIT
 const uint8_t fmavx_slow_len[8] = {
     3, 3, 3, 3, // 000xx
     4, 4,       // 0010x
@@ -1243,12 +1242,29 @@ CHECKRANGE(len,258);
                         }
                     }
                 } else {
-                    // slow path: 00xxx prefixes -> set code, fall through to switch
+                    // slow path: 00xxx prefixes -> fuse CODE_0 and CODE_255 inline
                     uint32_t peek = aligned >> 27;
-                    uint32_t prefix_len = fmavx_slow_len[peek];
-                    if (prefix_len <= bit_cnt) {
-                        code = fmavx_slow_code[peek];
-                        bit_cnt -= prefix_len;
+                    if (peek <= 5) {
+                        // 000 prefix -> literal 0x00 (~20-25% of all symbols)
+                        // 0010 prefix -> literal 0xFF (~3-4%)
+                        uint32_t prefix_len = (peek <= 3) ? 3 : 4;
+                        if (prefix_len <= bit_cnt) {
+                            uint8_t val = (peek <= 3) ? 0x00 : 0xFF;
+                            bit_cnt -= prefix_len;
+                            // restore and output
+                            fmavx_status.bit_buf = bit_buf;
+                            fmavx_status.bit_cnt = bit_cnt;
+                            fmavx_status.in_pos = in_pos;
+                            TS_END(0, 1000);
+                            payload_out[(*len_out)++] = val;
+                            continue;
+                        }
+                    } else {
+                        // 0011x prefix -> RLE (rare), fall through to switch
+                        if (bit_cnt >= 5) {
+                            code = (peek & 1) ? MAVLINKX_CODE_255_RLE : MAVLINKX_CODE_0_RLE;
+                            bit_cnt -= 5;
+                        }
                     }
                 }
             }
