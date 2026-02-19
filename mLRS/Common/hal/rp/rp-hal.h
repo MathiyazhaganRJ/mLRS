@@ -14,4 +14,20 @@
     #include "tx-hal-diy-2400-rp.h"
 #endif
 
+#if defined RX_WAVESHARE_RP2040
+    #include "rx-hal-waveshare-rp.h"
+#endif
+
+#if defined TX_WAVESHARE_RP2040
+    #include "tx-hal-waveshare-rp.h"
+#endif
+
+#if defined RX_WAVESHARE_RP2040_433
+    #include "rx-hal-waveshare-rp2040-433.h"
+#endif
+
+#if defined TX_WAVESHARE_RP2040_433
+    #include "tx-hal-waveshare-rp2040-433.h"
+#endif
+
 #endif // RP_HAL_H

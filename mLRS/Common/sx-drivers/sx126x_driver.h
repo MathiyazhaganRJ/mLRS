@@ -12,7 +12,10 @@
 // #define POWER_USE_DEFAULT_RFPOWER_CALC
 // #define SX_HAS_NO_RESET
 // #define SX_USE_PA_CONFIG_10_DBM
-// #define SX_USE_CRYSTALOSCILLATOR
+// #define SX_USE_CRYSTALOSCILLATOR   // use crystal oscillator (not TCXO)
+// #define SX_USE_TCXO_1P8_V          // TCXO at 1.8V (default if none specified)
+// #define SX_USE_TCXO_2P7_V          // TCXO at 2.7V
+// #define SX_USE_TCXO_3P3_V          // TCXO at 3.3V (e.g. Waveshare RP2040-LoRa)
 // #define SX_USE_REGULATOR_MODE_DCDC
 // #define SX2_USE_CRYSTALOSCILLATOR
 // #define SX2_USE_REGULATOR_MODE_DCDC
@@ -460,9 +463,15 @@ class Sx126xDriver : public Sx126xDriverCommon
 
     void Init(void)
     {
-        Sx126xDriverCommon::Init();
+        Sx126xDriverCommon::Init(); // defaults osc_configuration = TCXO_1P8_V
 #ifdef SX_USE_CRYSTALOSCILLATOR
         osc_configuration = SX12xx_OSCILLATOR_CONFIG_CRYSTAL;
+#elif defined SX_USE_TCXO_3P3_V
+        osc_configuration = SX12xx_OSCILLATOR_CONFIG_TCXO_3P3_V; // Waveshare RP2040-LoRa uses 3.3V TCXO
+#elif defined SX_USE_TCXO_2P7_V
+        osc_configuration = SX12xx_OSCILLATOR_CONFIG_TCXO_2P7_V;
+#elif defined SX_USE_TCXO_1P8_V
+        osc_configuration = SX12xx_OSCILLATOR_CONFIG_TCXO_1P8_V; // same as default
 #endif
 
         spi_init();
