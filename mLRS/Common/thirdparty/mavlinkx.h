@@ -15,6 +15,8 @@
 #ifndef MAVLINKX_H
 #define MAVLINKX_H
 
+#include "../time_stats.h"
+
 
 #define MAVLINKX_CRC8_LOOKUP_TABLE
 #define MAVLINKX_COMPRESSION // compression with O3 costs ca 8 kB flash

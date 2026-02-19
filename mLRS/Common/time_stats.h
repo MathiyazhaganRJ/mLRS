@@ -100,6 +100,12 @@ void TS_END(uint8_t block, uint32_t report_period_ms = 10000, bool _continue = f
 }
 
 
+#else
+
+static inline uint32_t TS_MICROS32(uint8_t block) { return 0; }
+static inline void TS_START(uint8_t block) {}
+static inline void TS_END(uint8_t block, uint32_t report_period_ms = 10000, bool _continue = false) {}
+
 #endif // DEBUG_ENABLED
 
 #endif // TIME_STATS_H
