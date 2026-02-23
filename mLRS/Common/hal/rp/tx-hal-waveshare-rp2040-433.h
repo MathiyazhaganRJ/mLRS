@@ -12,6 +12,8 @@
 
 //-- UARTs (USB shared between Serial and COM)
 #define UARTB_USE_SERIAL
+#define UARTB_TXBUFSIZE              2048
+#define UARTB_RXBUFSIZE              2048
 #define UARTC_USE_SERIAL
 
 //-- UART: JR bay Pin5 half-duplex on GP9 (CRSF from radio)

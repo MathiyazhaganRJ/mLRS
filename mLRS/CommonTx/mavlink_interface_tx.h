@@ -657,12 +657,11 @@ void tTxMavlink::send_heartbeat(void)
     fmav_msg_heartbeat_pack(
         &msg_buf,
         RADIO_LINK_SYSTEM_ID, MAV_COMP_ID_TELEMETRY_RADIO,  // sysid, compid, SiK uses 51, 68
-        MAV_TYPE_GENERIC, // type
+        49, // MAV_TYPE_RADIO
         MAV_AUTOPILOT_INVALID,
-        0, // base_mode
+        0, // base_mode (SiK uses 0)
         0, // custom_mode
         MAV_STATE_ACTIVE,
-        //uint8_t type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status,
         &status_serial_out);
 
     send_msg_serial_out();
@@ -841,7 +840,7 @@ void tTxMavlink::component_do(void)
 
     // heartbeat
 
-    if ((tnow_ms - heartbeat_tlast_ms) >= 1000) {
+    if ((tnow_ms - heartbeat_tlast_ms) >= 500) { // 2Hz for MissionPlanner
         heartbeat_tlast_ms = tnow_ms;
         inject_task |= INJECT_TASK_HEARTBEAT;
     }
