@@ -110,7 +110,7 @@ class tTxMavlink
     uint8_t buf_ser_in[MAVLINK_BUF_SIZE]; // buffer for ser in parser
     fmav_status_t status_ser2_in;
     uint8_t buf_ser2_in[MAVLINK_BUF_SIZE];
-    tFifo<char,512> fifo_link_out; // needs to be at least 82 + 280
+    tFifo<char,1024> fifo_link_out; // needs to be at least 82 + 280
 #endif
     void parse_serial_in_link_out(void);
 
@@ -235,13 +235,13 @@ void tTxMavlink::Do(void)
         msg_seq_initialized = false;
     }
 
-    if (!SERIAL_LINK_MODE_IS_MAVLINK(Setup.Rx.SerialLinkMode)) return;
+    if (SERIAL_LINK_MODE_IS_MAVLINK(Setup.Rx.SerialLinkMode)) {
+        // parse link in -> serial out, do it before parse_serial_in_link_out()
+        parse_link_in_serial_out();
 
-    // parse link in -> serial out, do it before parse_serial_in_link_out()
-    parse_link_in_serial_out();
-
-    // parse ser in -> link out
-    parse_serial_in_link_out();
+        // parse ser in -> link out
+        parse_serial_in_link_out();
+    }
 
     if (Setup.Tx[Config.ConfigId].SendRadioStatus) {
         if ((tnow_ms - radio_status_tlast_ms) >= 1000) {
@@ -657,10 +657,10 @@ void tTxMavlink::send_heartbeat(void)
     fmav_msg_heartbeat_pack(
         &msg_buf,
         RADIO_LINK_SYSTEM_ID, MAV_COMP_ID_TELEMETRY_RADIO,  // sysid, compid, SiK uses 51, 68
-        MAV_TYPE_GENERIC, // type ???
+        MAV_TYPE_GENERIC, // type
         MAV_AUTOPILOT_INVALID,
-        MAV_MODE_FLAG_SAFETY_ARMED,
-        0,
+        0, // base_mode
+        0, // custom_mode
         MAV_STATE_ACTIVE,
         //uint8_t type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status,
         &status_serial_out);

@@ -68,9 +68,9 @@ void led_red_off(void)    { gpio_low(LED_RED); }
 void led_red_on(void)     { gpio_high(LED_RED); }
 void led_red_toggle(void) { gpio_toggle(LED_RED); }
 
-//-- Serial/COM switch (USB shared — default to COM/CLI mode)
-bool tx_ser_or_com_serial = false;
-void ser_or_com_init(void)       { tx_ser_or_com_serial = false; }
+//-- Serial/COM switch (USB shared — default to MAVLink mode)
+bool tx_ser_or_com_serial = true;
+void ser_or_com_init(void)       { tx_ser_or_com_serial = true; }
 bool ser_or_com_serial(void)     { return tx_ser_or_com_serial; }
 void ser_or_com_set_to_com(void) { tx_ser_or_com_serial = false; }
 
