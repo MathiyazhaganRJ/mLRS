@@ -29,5 +29,4 @@
 #if defined TX_WAVESHARE_RP2040_433
     #include "tx-hal-waveshare-rp2040-433.h"
 #endif
-
 #endif // RP_HAL_H
