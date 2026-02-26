@@ -41,14 +41,11 @@ const rfpower_t rfpower_list[] = {
 #define POWER_SX1280_MAX_DBM      SX1280_POWER_0_DBM // maximum allowed sx power
 #define POWER_USE_DEFAULT_RFPOWER_CALC
 
-#define RFPOWER_DEFAULT           1 // index into rfpower_list array
+#define RFPOWER_DEFAULT           0 // index into rfpower_list array (Minimal power)
 
 const rfpower_t rfpower_list[] = {
-    { .dbm = POWER_MIN, .mW = INT8_MIN },
-    { .dbm = POWER_10_DBM, .mW = 10 },
-    { .dbm = POWER_20_DBM, .mW = 100 },
-    { .dbm = POWER_24_DBM, .mW = 250 },
-    { .dbm = POWER_27_DBM, .mW = 500 },
+    { .dbm = POWER_MIN, .mW = 1 },     // Absolute Minimum
+    { .dbm = POWER_10_DBM, .mW = 10 }, // Safe testing limit
 };
 
 #endif

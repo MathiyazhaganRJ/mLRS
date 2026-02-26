@@ -155,3 +155,7 @@
 #include "tx-hal-flysky-int-pa01-2400-esp32s3.h"
 #endif
 
+#ifdef TX_ELRS_DIY_2400_ESP32
+#include "tx-hal-elrs-diy-2400-esp32.h"
+#endif
+

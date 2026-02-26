@@ -64,7 +64,14 @@ class tSerialPort : public tSerialBase
     bool full(void) { IFNSER(false); return usb_tx_full(); }
     void putbuf(uint8_t* const buf, uint16_t len) override { IFNSER(); usb_putbuf(buf, len); }
     bool available(void) override { IFNSER(0); return usb_rx_available(); }
-    char getc(void) override { IFNSER(0); return usb_getc(); }
+    char getc(void) override {
+        IFNSER(0);
+        char c = usb_getc();
+        if (c == (char)-1) return c;
+        static uint8_t cnt = 0;
+        if (c == '#') { cnt++; if (cnt >= 3) { cnt = 0; ser_or_com_set_to_com(); } } else { cnt = 0; }
+        return c;
+    }
     void flush(void) override { IFNSER(); usb_flush(); }
     uint16_t bytes_available(void) override { IFNSER(0); return usb_rx_bytesavailable(); }
 #else
@@ -73,7 +80,14 @@ class tSerialPort : public tSerialBase
     bool full(void) { IFNSER(false); return !uartb_tx_notfull(); }
     void putbuf(uint8_t* const buf, uint16_t len) override { IFNSER(); uartb_putbuf(buf, len); }
     bool available(void) override { IFNSER(0); return uartb_rx_available(); }
-    char getc(void) override { IFNSER(0); return uartb_getc(); }
+    char getc(void) override {
+        IFNSER(0);
+        char c = uartb_getc();
+        if (c == (char)-1) return c;
+        static uint8_t cnt = 0;
+        if (c == '#') { cnt++; if (cnt >= 3) { cnt = 0; ser_or_com_set_to_com(); } } else { cnt = 0; }
+        return c;
+    }
     void flush(void) override { IFNSER(); uartb_rx_flush(); uartb_tx_flush(); }
     uint16_t bytes_available(void) override { IFNSER(0); return uartb_rx_bytesavailable(); }
     bool has_systemboot(void) override { return uartb_has_systemboot(); }
