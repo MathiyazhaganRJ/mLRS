@@ -93,17 +93,14 @@ if __name__ == "__main__":
         GNU_DIR = os.getenv("MLRS_GNU_DIR")
 
     if ST_DIR == '' or GNU_DIR == '' or not os.path.exists(os.path.join(ST_DIR,GNU_DIR)):
-        print('ERROR: gnu-tools not found!')
-        exit(1)
-
-    print('STM32CubeIDE found in:', ST_DIR)
-    print('gnu-tools found in:', GNU_DIR)
+        print('WARNING: gnu-tools from STM32CubeIDE not found! Assuming arm-none-eabi-gcc is in PATH.')
+        GCC_DIR = ''
+    else:
+        print('STM32CubeIDE found in:', ST_DIR)
+        print('gnu-tools found in:', GNU_DIR)
+        GCC_DIR = os.path.join(ST_DIR,GNU_DIR,'tools','bin')
+        
     print('------------------------------------------------------------')
-
-
-#-- GCC preliminaries
-
-GCC_DIR = os.path.join(ST_DIR,GNU_DIR,'tools','bin')
 
 # we need to modify the PATH so that the correct toolchain/compiler is used
 # why does sys.path.insert(0,xxx) not work?
@@ -424,7 +421,7 @@ MLRS_SOURCES_MODULES = [
     os.path.join('modules','sx12xx-lib','src','lr11xx.cpp'),
     
     #os.path.join('modules','sx12xx-lib','src','lr20xx.cpp'), ## TODO !!!!!!
-    os.path.join('Common','sx-drivers','lr20xx.cpp'), ## TODO !!!!!!
+    #os.path.join('Common','sx-drivers','lr20xx.cpp'), ## TODO !!!!!!
     
     os.path.join('modules','stm32ll-lib','src','stdstm32.c'),
     ]
@@ -1038,6 +1035,9 @@ TLIST = [
         'target' : 'rx-diy-e28dual-board02-f103cb',     'target_D' : 'RX_DIY_E28DUAL_BOARD02_F103CB',
         'extra_D_list' : [], 'appendix' : ''
     },{
+        'target' : 'rx-diy-e28-board01-f103cb',         'target_D' : 'RX_DIY_E28_BOARD01_F103CB',
+        'extra_D_list' : [], 'appendix' : ''
+    },{
         'target' : 'rx-diy-e28-g441kb',                 'target_D' : 'RX_DIY_E28_G441KB',
         'extra_D_list' : [], 'appendix' : ''
     },{
@@ -1075,6 +1075,9 @@ TLIST = [
         'extra_D_list' : [], 'appendix' : ''
     },{
         'target' : 'tx-diy-e28dual-board02-f103cb',     'target_D' : 'TX_DIY_E28DUAL_BOARD02_F103CB',
+        'extra_D_list' : [], 'appendix' : ''
+    },{
+        'target' : 'tx-diy-e28-board01-f103cb',         'target_D' : 'TX_DIY_E28_BOARD01_F103CB',
         'extra_D_list' : [], 'appendix' : ''
     },{
         'target' : 'tx-diy-e28dual-module02-g491re',    'target_D' : 'TX_DIY_E28DUAL_MODULE02_G491RE',

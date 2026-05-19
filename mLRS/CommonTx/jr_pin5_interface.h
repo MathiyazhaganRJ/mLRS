@@ -208,6 +208,13 @@ void tPin5BridgeBase::pin5_init(void)
 
     uart_init_isroff();
 
+#if defined JRPIN5_HALFDUPLEX_F103
+    LL_USART_Disable(UART_UARTx);
+    SET_BIT(UART_UARTx->CR3, USART_CR3_HDSEL);
+    LL_USART_Enable(UART_UARTx);
+    gpio_init(UART_TX_IO, IO_MODE_OUTPUT_ALTERNATE_OD, IO_SPEED_VERYFAST); // Tx pin to OD
+#endif
+
 // internal peripheral inverter method, needs a diode from Tx to Rx
 #if defined JRPIN5_RX_TX_INVERT_INTERNAL
     LL_USART_Disable(UART_UARTx);
@@ -293,6 +300,9 @@ void tPin5BridgeBase::pin5_tx_enable(void)
     gpio_change_af(UART_TX_IO, IO_MODE_OUTPUT_ALTERNATE_PP, UART_IO_AF, IO_SPEED_VERYFAST); // Tx pin is now tx
     gpio_change(UART_RX_IO, IO_MODE_INPUT_ANALOG, IO_SPEED_VERYFAST); // disable Rx pin
 #endif
+#if defined JRPIN5_HALFDUPLEX_F103
+    // STM32 HDSEL mode: hardware auto-manages TX/RX direction on PB6. No register changes needed.
+#endif
 }
 
 
@@ -319,6 +329,9 @@ void tPin5BridgeBase::pin5_rx_enable(void)
 #if defined JRPIN5_FULL_INTERNAL_ON_RX_TX
     gpio_change_af(UART_RX_IO, IO_MODE_INPUT_PD, UART_IO_AF, IO_SPEED_VERYFAST); // Rx pin is now rx
     gpio_change(UART_TX_IO, IO_MODE_INPUT_ANALOG, IO_SPEED_VERYFAST); // disable Tx pin
+#endif
+#if defined JRPIN5_HALFDUPLEX_F103
+    // STM32 HDSEL mode: hardware auto-manages TX/RX direction on PB6. No register changes needed.
 #endif
 
     uart_rx_enableisr(ENABLE);
