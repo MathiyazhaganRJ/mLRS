@@ -3,7 +3,7 @@
 
 > **Status:** Working ✅ — MAVLink telemetry confirmed, Bind confirmed, CLI confirmed
 > **Firmware version:** v1.4.01
-> **Target name:** `tx-diy-e28-board01-f103cb`
+> **Target name:** `tx-diy-e28-board01-rj-f103cb`
 
 ---
 
@@ -17,15 +17,15 @@ This document describes every file changed to add a **custom STM32F103 Blue Pill
 
 When you run:
 ```bash
-python tools/run_make_firmwares.py -t tx-diy-e28-board01-f103cb
+python tools/run_make_firmwares.py -t tx-diy-e28-board01-rj-f103cb
 ```
 The following chain fires:
 
 ```
 run_make_firmwares.py
-  └─ Defines: TX_DIY_E28_BOARD01_F103CB
+  └─ Defines: TX_DIY_E28_BOARD01_RJ_F103CB
         └─ device_conf.h: Sets DEVICE_NAME, DEVICE_IS_TRANSMITTER, DEVICE_HAS_SX128x, FREQUENCY_BAND_2P4_GHZ
-              └─ hal.h: Includes → stm32/tx-hal-diy-e28-board01-f103cb.h
+              └─ hal.h: Includes → stm32/tx-hal-diy-e28-board01-rj-f103cb.h
                     └─ HAL file: Defines all GPIO pins, UARTs, SPI, LEDs, Button, Power PA, JR Pin5
 ```
 
@@ -53,12 +53,12 @@ Understanding this chain is the key to porting any board correctly.
 
 # 3. Registered new RX target in TLIST:
 +    },{\
-+        'target' : 'rx-diy-e28-board01-f103cb', 'target_D' : 'RX_DIY_E28_BOARD01_F103CB',
++        'target' : 'rx-diy-e28-board01-rj-f103cb', 'target_D' : 'RX_DIY_E28_BOARD01_RJ_F103CB',
 +        'extra_D_list' : [], 'appendix' : ''
 
 # 4. Registered new TX target in TLIST:
 +    },{\
-+        'target' : 'tx-diy-e28-board01-f103cb', 'target_D' : 'TX_DIY_E28_BOARD01_F103CB',
++        'target' : 'tx-diy-e28-board01-rj-f103cb', 'target_D' : 'TX_DIY_E28_BOARD01_RJ_F103CB',
 +        'extra_D_list' : [], 'appendix' : ''
 ```
 
@@ -92,7 +92,7 @@ Understanding this chain is the key to porting any board correctly.
 **What was added:**
 ```c
 // For RX variant:
-#ifdef RX_DIY_E28_BOARD01_F103CB
+#ifdef RX_DIY_E28_BOARD01_RJ_F103CB
   #define DEVICE_NAME "DIY E28 F103CB"
   #define DEVICE_IS_RECEIVER
   #define DEVICE_HAS_SX128x      // E28 = SX1280 = SX128x family
@@ -100,7 +100,7 @@ Understanding this chain is the key to porting any board correctly.
 #endif
 
 // For TX variant:
-#ifdef TX_DIY_E28_BOARD01_F103CB
+#ifdef TX_DIY_E28_BOARD01_RJ_F103CB
   #define DEVICE_NAME "DIY E28 F103CB"
   #define DEVICE_IS_TRANSMITTER
   #define DEVICE_HAS_SX128x      // E28 = SX1280 = SX128x family
@@ -127,13 +127,13 @@ Always place your new `#ifdef` block **near other boards with the same RF chip**
 **What was added:**
 ```c
 // For RX:
-#ifdef RX_DIY_E28_BOARD01_F103CB
-#include "stm32/rx-hal-diy-e28-board01-f103cb.h"
+#ifdef RX_DIY_E28_BOARD01_RJ_F103CB
+#include "stm32/rx-hal-diy-e28-board01-rj-f103cb.h"
 #endif
 
 // For TX:
-#ifdef TX_DIY_E28_BOARD01_F103CB
-#include "stm32/tx-hal-diy-e28-board01-f103cb.h"
+#ifdef TX_DIY_E28_BOARD01_RJ_F103CB
+#include "stm32/tx-hal-diy-e28-board01-rj-f103cb.h"
 #endif
 ```
 
@@ -141,7 +141,7 @@ Always place your new `#ifdef` block **near other boards with the same RF chip**
 
 ---
 
-### File 5: `mLRS/Common/hal/stm32/tx-hal-diy-e28-board01-f103cb.h` *(New File)*
+### File 5: `mLRS/Common/hal/stm32/tx-hal-diy-e28-board01-rj-f103cb.h` *(New File)*
 **Role:** The master pin definition file for your specific board. This is where ALL your hardware decisions are encoded.
 
 **Key sections and their purpose:**
@@ -255,7 +255,7 @@ Find the closest OlliW board to yours in `mLRS/Common/hal/stm32/`. Use this as y
 
 | Your Hardware | Best Reference File to Copy |
 |---|---|
-| STM32F103 + E28 (SX1280) 2.4GHz | `tx-hal-diy-e28-board01-f103cb.h` ← *This project* |
+| STM32F103 + E28 (SX1280) 2.4GHz | `tx-hal-diy-e28-board01-rj-f103cb.h` ← *This project* |
 | STM32F103 + E22 (SX1262) 868/915MHz | `tx-hal-diy-e28dual-board02-f103cb.h` |
 | STM32G431 + E28 (SX1280) 2.4GHz | `tx-hal-diy-e28-g431kb.h` |
 | STM32G431 + E22 (SX1262) 868/915MHz | `tx-hal-diy-e22-g431kb.h` or `tx-hal-matek-mr900-30-g431kb.h` |
@@ -267,7 +267,7 @@ Find the closest OlliW board to yours in `mLRS/Common/hal/stm32/`. Use this as y
 
 ```bash
 # Copy the closest reference:
-cp mLRS/Common/hal/stm32/tx-hal-diy-e28-board01-f103cb.h \
+cp mLRS/Common/hal/stm32/tx-hal-diy-e28-board01-rj-f103cb.h \
    mLRS/Common/hal/stm32/tx-hal-myboard-f103cb.h
 ```
 
@@ -426,7 +426,7 @@ In both modes, connect FTDI at **115200 baud** to the same physical `PA2/PA3` pi
 
 ## 8. What We Changed From OlliW's Original HAL — and Why
 
-OlliW's original HAL file (commit `e6c4289c`, path `hal/tx-hal-diy-e28-board01-f103cb.h`) is a very old, minimal skeleton. The current repository version (in `hal/stm32/`) is a completely restructured, modern file. Below is a precise record of every difference between the two and the reason for each change.
+OlliW's original HAL file (commit `e6c4289c`, path `hal/tx-hal-diy-e28-board01-rj-f103cb.h`) is a very old, minimal skeleton. The current repository version (in `hal/stm32/`) is a completely restructured, modern file. Below is a precise record of every difference between the two and the reason for each change.
 
 ---
 
@@ -607,4 +607,4 @@ void leds_init(void) {
 
 ---
 
-*Generated: 2026-05-19 | mLRS v1.4.01 | Target: tx-diy-e28-board01-f103cb*
+*Generated: 2026-05-19 | mLRS v1.4.01 | Target: tx-diy-e28-board01-rj-f103cb*
