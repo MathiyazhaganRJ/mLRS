@@ -1032,7 +1032,7 @@ TLIST = [
         'target' : 'rx-diy-e28dual-board02-f103cb',     'target_D' : 'RX_DIY_E28DUAL_BOARD02_F103CB',
         'extra_D_list' : [], 'appendix' : ''
     },{
-        'target' : 'rx-diy-e28-board01-f103cb',         'target_D' : 'RX_DIY_E28_BOARD01_F103CB',
+        'target' : 'rx-diy-e28-board01-rj-f103cb',      'target_D' : 'RX_DIY_E28_BOARD01_RJ_F103CB',
         'extra_D_list' : [], 'appendix' : ''
     },{
         'target' : 'rx-diy-e28-g441kb',                 'target_D' : 'RX_DIY_E28_G441KB',
@@ -1074,7 +1074,7 @@ TLIST = [
         'target' : 'tx-diy-e28dual-board02-f103cb',     'target_D' : 'TX_DIY_E28DUAL_BOARD02_F103CB',
         'extra_D_list' : [], 'appendix' : ''
     },{
-        'target' : 'tx-diy-e28-board01-f103cb',         'target_D' : 'TX_DIY_E28_BOARD01_F103CB',
+        'target' : 'tx-diy-e28-board01-rj-f103cb',      'target_D' : 'TX_DIY_E28_BOARD01_RJ_F103CB',
         'extra_D_list' : [], 'appendix' : ''
     },{
         'target' : 'tx-diy-e28dual-module02-g491re',    'target_D' : 'TX_DIY_E28DUAL_MODULE02_G491RE',

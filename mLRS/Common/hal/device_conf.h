@@ -218,8 +218,8 @@ The default selection of frequency bands can be overruled by feature defines.
   #define FREQUENCY_BAND_2P4_GHZ
 #endif
 
-#ifdef RX_DIY_E28_BOARD01_F103CB
-  #define DEVICE_NAME "DIY E28 F103CB"
+#ifdef RX_DIY_E28_BOARD01_RJ_F103CB
+  #define DEVICE_NAME "DIY E28 RJ F103CB"
   #define DEVICE_IS_RECEIVER
   #define DEVICE_HAS_SX128x
   #define FREQUENCY_BAND_2P4_GHZ
@@ -240,8 +240,8 @@ The default selection of frequency bands can be overruled by feature defines.
   #define FREQUENCY_BAND_2P4_GHZ
 #endif
 
-#ifdef TX_DIY_E28_BOARD01_F103CB
-  #define DEVICE_NAME "DIY E28 F103CB"
+#ifdef TX_DIY_E28_BOARD01_RJ_F103CB
+  #define DEVICE_NAME "DIY E28 RJ F103CB"
   #define DEVICE_IS_TRANSMITTER
   #define DEVICE_HAS_SX128x
   #define FREQUENCY_BAND_2P4_GHZ
