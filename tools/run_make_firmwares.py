@@ -107,6 +107,9 @@ if __name__ == "__main__":
             exit(1)
         GCC_DIR = os.path.dirname(gcc_path) # arm-none-eabi-gcc is directly in this dir
         print('arm-none-eabi toolchain found in:', GCC_DIR)
+
+    if GCC_DIR != '':
+        os.environ["PATH"] = GCC_DIR + os.pathsep + os.environ.get("PATH", "")
     print('------------------------------------------------------------')
 
 
@@ -587,9 +590,9 @@ def mlrs_compile_file(target, file):
     # construct command line
     cmd = ''
     if is_cpp:
-        cmd = os.path.join(GCC_DIR,'arm-none-eabi-g++ ')
+        cmd = 'arm-none-eabi-g++ '
     else:
-        cmd = os.path.join(GCC_DIR,'arm-none-eabi-gcc ')
+        cmd = 'arm-none-eabi-gcc '
 
     if not is_asm:
         cmd += '"'+os.path.join(MLRS_DIR,file)+'" '
@@ -695,7 +698,7 @@ def mlrs_link_target(target):
 
     # generate command line
     cmd = ''
-    cmd += os.path.join(GCC_DIR,'arm-none-eabi-g++') + ' '
+    cmd += 'arm-none-eabi-g++ '
     cmd += '-o "'+os.path.join(MLRS_BUILD_DIR,target.build_dir,target.elf_name+'.elf')+'" '
     cmd += '@"'+os.path.join(MLRS_BUILD_DIR,target.build_dir,'objects.list')+'" '
     cmd += '-T"'+os.path.join(MLRS_DIR,target.target,target.linker_script)+'" '
@@ -770,19 +773,19 @@ def mlrs_build_target(target, cmdline_D_list):
     print('linking')
 
     mlrs_link_target(target)
-    os.system(os.path.join(GCC_DIR,'arm-none-eabi-size')+' '+os.path.join(MLRS_BUILD_DIR,target.build_dir,target.elf_name+'.elf'))
+    os.system('arm-none-eabi-size "'+os.path.join(MLRS_BUILD_DIR,target.build_dir,target.elf_name+'.elf')+'"')
 
     if 'MLRS_FEATURE_ELRS_BOOTLOADER' in target.extra_D_list:
         os.system(
-            os.path.join(GCC_DIR,'arm-none-eabi-objcopy') + ' -O binary ' +
-            os.path.join(MLRS_BUILD_DIR,target.build_dir,target.elf_name+'.elf') + ' ' +
-            os.path.join(MLRS_BUILD_DIR,target.build_dir,target.elf_name+'.elrs')
+            'arm-none-eabi-objcopy -O binary "' +
+            os.path.join(MLRS_BUILD_DIR,target.build_dir,target.elf_name+'.elf') + '" "' +
+            os.path.join(MLRS_BUILD_DIR,target.build_dir,target.elf_name+'.elrs') + '"'
         )
     else:
         os.system(
-            os.path.join(GCC_DIR,'arm-none-eabi-objcopy') + ' -O ihex ' +
-            os.path.join(MLRS_BUILD_DIR,target.build_dir,target.elf_name+'.elf') + ' ' +
-            os.path.join(MLRS_BUILD_DIR,target.build_dir,target.elf_name+'.hex')
+            'arm-none-eabi-objcopy -O ihex "' +
+            os.path.join(MLRS_BUILD_DIR,target.build_dir,target.elf_name+'.elf') + '" "' +
+            os.path.join(MLRS_BUILD_DIR,target.build_dir,target.elf_name+'.hex') + '"'
         )
 
     print('------------------------------------------------------------')
@@ -1037,6 +1040,9 @@ TLIST = [
         'target' : 'rx-diy-e28dual-board02-f103cb',     'target_D' : 'RX_DIY_E28DUAL_BOARD02_F103CB',
         'extra_D_list' : [], 'appendix' : ''
     },{
+        'target' : 'rx-diy-e28-board01-rj-f103cb',      'target_D' : 'RX_DIY_E28_BOARD01_RJ_F103CB',
+        'extra_D_list' : [], 'appendix' : ''
+    },{
         'target' : 'rx-diy-e28-g441kb',                 'target_D' : 'RX_DIY_E28_G441KB',
         'extra_D_list' : [], 'appendix' : ''
     },{
@@ -1077,6 +1083,9 @@ TLIST = [
         'extra_D_list' : [], 'appendix' : ''
     },{
         'target' : 'tx-diy-e28dual-board02-f103cb',     'target_D' : 'TX_DIY_E28DUAL_BOARD02_F103CB',
+        'extra_D_list' : [], 'appendix' : ''
+    },{
+        'target' : 'tx-diy-e28-board01-rj-f103cb',      'target_D' : 'TX_DIY_E28_BOARD01_RJ_F103CB',
         'extra_D_list' : [], 'appendix' : ''
     },{
         'target' : 'tx-diy-e28dual-module02-g491re',    'target_D' : 'TX_DIY_E28DUAL_MODULE02_G491RE',

@@ -186,12 +186,18 @@ extern "C" { void delay_ms(uint16_t ms); }
 #ifdef RX_DIY_E28DUAL_BOARD02_F103CB
 #include "stm32/rx-hal-diy-e28dual-board02-f103cb.h"
 #endif
+#ifdef RX_DIY_E28_BOARD01_RJ_F103CB
+#include "stm32/rx-hal-diy-e28-board01-rj-f103cb.h"
+#endif
 #ifdef RX_DIY_E28_G441KB
 #include "stm32/rx-hal-diy-e28-g441kb.h"
 #endif
 
 #ifdef TX_DIY_E28DUAL_BOARD02_F103CB
 #include "stm32/tx-hal-diy-e28dual-board02-f103cb.h"
+#endif
+#ifdef TX_DIY_E28_BOARD01_RJ_F103CB
+#include "stm32/tx-hal-diy-e28-board01-rj-f103cb.h"
 #endif
 #ifdef TX_DIY_E28_G431KB
 #include "stm32/tx-hal-diy-e28-g431kb.h"
