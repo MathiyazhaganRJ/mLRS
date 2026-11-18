@@ -26,6 +26,10 @@
     #include "rx-hal-waveshare-rp2040-433.h"
 #endif
 
+#if defined RX_WAVESHARE_RP2040_433_CAN
+    #include "rx-hal-waveshare-rp2040-433-can.h"
+#endif
+
 #if defined TX_WAVESHARE_RP2040_433
     #include "tx-hal-waveshare-rp2040-433.h"
 #endif

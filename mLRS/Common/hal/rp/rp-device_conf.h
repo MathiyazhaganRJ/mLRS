@@ -58,3 +58,10 @@
   #define DEVICE_HAS_SX126x
   #define FREQUENCY_BAND_433_MHZ
 #endif
+
+#ifdef RX_WAVESHARE_RP2040_433_CAN
+  #define DEVICE_NAME "Waveshare RP2040 433 CAN Rx"
+  #define DEVICE_IS_RECEIVER
+  #define DEVICE_HAS_SX126x
+  #define FREQUENCY_BAND_433_MHZ
+#endif
