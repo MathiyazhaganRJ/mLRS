@@ -34,7 +34,11 @@
 #endif
 
 #include "../Common/hal/hal.h"
+#if defined ARDUINO_ARCH_RP2040 || defined ARDUINO_ARCH_RP2350
+#include "../Common/rp-lib/rp-can.h"
+#else
 #include "../modules/stm32-dronecan-lib/stdstm32-can.h"
+#endif
 
 extern volatile uint32_t millis32(void);
 extern uint64_t micros64(void);
@@ -51,8 +55,10 @@ int16_t dc_hal_enable_isr(void) { return 0; } // dummies to avoid #ifdefs below
 void dc_hal_rx_flush(void) {}
 #endif
 
+#if !defined ARDUINO_ARCH_RP2040 && !defined ARDUINO_ARCH_RP2350
 #if FDCAN_IRQ_PRIORITY != DRONECAN_IRQ_PRIORITY
 #error FDCAN_IRQ_PRIORITY not eq DRONECAN_IRQ_PRIORITY !
+#endif
 #endif
 
 //#define DRONECAN_PREFERRED_NODE_ID  68
@@ -62,6 +68,8 @@ void dc_hal_rx_flush(void) {}
 #define CANARD_POOL_SIZE  4096
 #elif defined STM32F1
 #define CANARD_POOL_SIZE  1024
+#elif defined ARDUINO_ARCH_RP2040 || defined ARDUINO_ARCH_RP2350
+#define CANARD_POOL_SIZE  4096
 #endif
 
 #define DRONECAN_BUF_SIZE  512 // needs to be larger than the largest DroneCAN frame size
