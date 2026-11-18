@@ -243,11 +243,18 @@ pio run -e <environment-name> --target upload
 
 ---
 
-## Part 4 — RP2040 Firmware Build
+## Part 4 — RP2040 & RP2350 Firmware Build
+
+> 💡 **Dedicated RP Guide Available:** For complete step-by-step instructions, target options (including DroneCAN over can2040 PIO), hardware wiring schematics, and flashing methods for RP microcontrollers, see the dedicated guide:  
+> 📖 [docs/BUILD_GUIDE_RP.md](BUILD_GUIDE_RP.md)
 
 ### 4.1 Same as ESP32 — uses PlatformIO
 
 ```powershell
+# Build Waveshare RP2040 433MHz with DroneCAN:
+pio run -e rx-waveshare-rp2040-433-can
+
+# Build Waveshare RP2040 433MHz Transmitter:
 pio run -e tx-waveshare-rp2040-433
 ```
 
